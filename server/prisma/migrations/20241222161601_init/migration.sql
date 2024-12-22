@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Student" ALTER COLUMN "lastLogin" SET DEFAULT CURRENT_TIMESTAMP;
