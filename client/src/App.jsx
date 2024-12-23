@@ -8,7 +8,7 @@ function App() {
         <div>
           <Sidebar></Sidebar>
         </div>
-        <div className="bg-slate-100 w-full">
+        <div className="bg-slate-100 w-full min-h-screen">
           <div>
             <Navbar></Navbar>
           </div>

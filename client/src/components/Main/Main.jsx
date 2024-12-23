@@ -172,7 +172,7 @@ const Main = () => {
 
   return (
     <div className="mt-3 mx-5 p-4 bg-white rounded-lg">
-      <div className="flex place-content-between">
+      <div className="flex flex-col md:flex-row place-content-between">
         <div className="flex gap-4">
           {/* Left 2 Select items */}
           <Select
@@ -207,7 +207,7 @@ const Main = () => {
         <div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="secondary" className=" bg-slate-200 ring-0 focus:ring-0 font-bold text-slate-600"><img src={plus}></img>Add new Student</Button>
+              <Button variant="secondary" className=" bg-slate-200 ring-0 focus:ring-0 font-bold text-slate-600 mt-5 md:mt-0"><img src={plus}></img>Add new Student</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -342,14 +342,14 @@ const Main = () => {
       </div>
 
       {/* Table */}
-      <Table>
+      <Table className="min-w-[900px]">
         <TableHeader>
           <TableRow>
             <TableHead className="text-black  font-bold">
               Student Name
             </TableHead>
             <TableHead className="text-black  font-bold">Cohort</TableHead>
-            <TableHead className="w-[400px] text-black  font-bold">
+            <TableHead className="w-[350px] text-black  font-bold">
               Courses
             </TableHead>
             <TableHead className="text-black  font-bold">Date joined</TableHead>

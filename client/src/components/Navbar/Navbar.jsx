@@ -7,7 +7,7 @@ import notificationIcon from "../../assets/icons/notification-icon.svg";
 const Navbar = () => {
   return (
     <>
-      <div className="flex place-content-between mt-5 mx-5">
+      <div className="hidden md:flex place-content-between mt-5 mx-5">
         <div className="flex bg-white items-center rounded-lg flex-1">
           <div>
             <img className="p-3" src={searchIcon}></img>

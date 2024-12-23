@@ -7,7 +7,7 @@ import reportsIcon from "../../assets/icons/reports-icon.svg";
 import settingsIcon from "../../assets/icons/settings-icon.svg";
 const Sidebar = () => {
   return (
-    <div className="w-60 text-gray-500 min-h-screen ">
+    <div className="hidden md:block w-60 text-gray-500 min-h-screen ">
       <img className="w-24 mx-3 pt-6 m-l mb-6" src={logo} alt="logo"></img>
       
       <div className=" font-bold">
