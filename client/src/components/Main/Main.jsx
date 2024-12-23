@@ -28,13 +28,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import axios from "axios";
 
 const Main = () => {
   const [addStudentName, addStudentNameUpdate] = useState();
   const [addYear, addYearUpdate] = useState();
   const [addClass, addClassUpdate] = useState();
-  const [courses, updateCourses] = useState();
-  const [addCourses, updateAddCourses] = useState();
+  const [courses, setCourses] = useState([]);
+  const [addCourses, addCoursesUpdate] = useState([]);
 
   return (
     <div className="mt-3 mx-5 p-4 bg-white rounded-lg">
@@ -79,7 +81,14 @@ const Main = () => {
                   <Label htmlFor="name" className="text-right">
                     Name
                   </Label>
-                  <Input onChange={(e)=>{addStudentNameUpdate(e.target.value)}} required id="name" className="col-span-3" />
+                  <Input
+                    onChange={(e) => {
+                      addStudentNameUpdate(e.target.value);
+                    }}
+                    required
+                    id="name"
+                    className="col-span-3"
+                  />
                 </div>
 
                 <div className="grid grid-cols-4 items-center gap-4">
@@ -108,8 +117,17 @@ const Main = () => {
                     Class
                   </Label>
                   <Select
-                    onValueChange={(e) => {
+                    onValueChange={async (e) => {
                       addClassUpdate(e);
+                      try {
+                        const response = await axios.get(
+                          `http://localhost:3000/api/courses/${e}`
+                        );
+                        setCourses(response.data);
+                      } catch (error) {
+                        console.error("Error fetching subjects:", error);
+                        setCourses([]);
+                      }
                     }}
                   >
                     <SelectTrigger className="w-[140px]">
@@ -121,15 +139,35 @@ const Main = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+                {courses.length > 0 && (
+                  <div>
+                    <Label>Select Courses</Label>
+                    {courses.map((data, id) => {
+                      return (
+                        <div key={data.id} className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="terms" className="text-right">{data.courseName}</label>
+                          <Checkbox value={data.id} name="courses" checked={addCourses.includes(data.id)} onCheckedChange={(checked)=>{
+                              addCoursesUpdate((prev) =>
+                                checked
+                                  ? [...prev, data.id] // Add the ID if checked
+                                  : prev.filter((id) => id !== data.id) // Remove the ID if unchecked
+                              );
+                          }}> </Checkbox>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-              
+
               <DialogFooter>
                 <DialogClose asChild>
                   <Button
                     type="submit"
                     onClick={() => {
-                      console.log(addStudentName,addClass,addYear);
+                      console.log(addStudentName, addYear, addClass, addCourses);
+                      addCoursesUpdate([])
+                      setCourses([])
                     }}
                   >
                     Save
