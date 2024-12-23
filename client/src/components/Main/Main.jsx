@@ -44,10 +44,10 @@ const Main = () => {
   const [displayData, setDisplayData] = useState([]);
 
   const [viewDialog, setViewDialog] = useState(false);
-  const [clickedStudentId, setClickedStudentId] = useState()
-  const [clickedStudentInfo,setClickedStudentinfo] = useState()
+  const [clickedStudentId, setClickedStudentId] = useState();
+  const [clickedStudentInfo, setClickedStudentinfo] = useState();
 
-  const [counter,setCounter] = useState(0)
+  const [counter, setCounter] = useState(0);
   useEffect(() => {
     const fetchStudents = async () => {
       if (getYear && getClass) {
@@ -71,18 +71,20 @@ const Main = () => {
     };
 
     fetchStudents();
-  }, [getYear, getClass,counter]);
+  }, [getYear, getClass, counter]);
 
-  const handleTableClick = async (studentId)=> {
-    setClickedStudentId(studentId)
+  const handleTableClick = async (studentId) => {
+    setClickedStudentId(studentId);
     try {
-      const response = await axios.get(`http://localhost:3000/api/getStudent/${studentId}`);
-      setClickedStudentinfo(response.data)
+      const response = await axios.get(
+        `http://localhost:3000/api/getStudent/${studentId}`
+      );
+      setClickedStudentinfo(response.data);
     } catch (error) {
-      console.error('Error fetching student:', error);
+      console.error("Error fetching student:", error);
     }
-    setViewDialog(true)
-  }
+    setViewDialog(true);
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -126,7 +128,7 @@ const Main = () => {
         studentData
       );
       console.log("Student added:", response.data);
-      setCounter((prev)=> prev+1)
+      setCounter((prev) => prev + 1);
     } catch (error) {
       console.error("Error adding student:", error);
     }
@@ -134,6 +136,22 @@ const Main = () => {
     setCourses([]);
   };
 
+  const updateStudentStatus = async (id, activeStatus) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/updateStudentStatus/${id}`,
+        {
+          active: activeStatus,
+        }
+      );
+      console.log("Updated student:", response.data);
+      setCounter((prev)=> prev+1)
+      setViewDialog(false)
+    } catch (error) {
+      console.error("Error updating student status:", error);
+    }
+  };
+  
   return (
     <div className="mt-3 mx-5 p-4 bg-white rounded-lg">
       <div className="flex place-content-between">
@@ -327,7 +345,11 @@ const Main = () => {
           {displayData.length > 0 &&
             displayData.map((data, id) => {
               return (
-                <TableRow key={data.id} id={data.id} onClick={()=>handleTableClick(data.id)}>
+                <TableRow
+                  key={data.id}
+                  id={data.id}
+                  onClick={() => handleTableClick(data.id)}
+                >
                   <TableCell>{data.studentName}</TableCell>
                   <TableCell>{data.annualYear}</TableCell>
                   <TableCell>
@@ -367,35 +389,45 @@ const Main = () => {
         <DialogContent>
           <DialogTitle>Student Information</DialogTitle>
           <DialogDescription>View and Update status here.</DialogDescription>
-          {
-            clickedStudentInfo && (             
-              <div>
-                <span className="text-xl font-bold ">{clickedStudentInfo.studentName}</span>
-                <br></br>
-                <span className="font-bold">Cohot : </span>
-                <span>{clickedStudentInfo.annualYear}</span>
-                <br></br>
-                <span className="font-bold">Date of Joining : </span>
-                <span>{formatDate(clickedStudentInfo.dateJoined)}</span>
-                <br></br>
-                <span className="font-bold">Last Login : </span>
-                <span>{formatDateTime(clickedStudentInfo.lastLogin)}</span>
-                <br></br>
-                <span className="font-bold">Status : </span>
-                <span>{clickedStudentInfo.active?"Active":"Inactive"}</span>
-                <br></br>
-                <span className="font-bold">Courses : </span>
-                {clickedStudentInfo.courses.map((data,id)=>{
-                  return<span key={data.id} className="mr-5">{data.courseName}</span>
-                })}
-                <br></br>
-                <div className="text-right">
-                  {clickedStudentInfo.active?<Button className="m-1 bg-red-400">Mark as Inactive</Button>:<Button className="m-1 bg-green-400">Mark as Active</Button>}
-                  <Button className="m-1 bg-red-400">Delete Student</Button>
-                </div>
+          {clickedStudentInfo && (
+            <div>
+              <span className="text-xl font-bold ">
+                {clickedStudentInfo.studentName}
+              </span>
+              <br></br>
+              <span className="font-bold">Cohot : </span>
+              <span>{clickedStudentInfo.annualYear}</span>
+              <br></br>
+              <span className="font-bold">Date of Joining : </span>
+              <span>{formatDate(clickedStudentInfo.dateJoined)}</span>
+              <br></br>
+              <span className="font-bold">Last Login : </span>
+              <span>{formatDateTime(clickedStudentInfo.lastLogin)}</span>
+              <br></br>
+              <span className="font-bold">Status : </span>
+              <span>{clickedStudentInfo.active ? "Active" : "Inactive"}</span>
+              <br></br>
+              <span className="font-bold">Courses : </span>
+              {clickedStudentInfo.courses.map((data, id) => {
+                return (
+                  <span key={data.id} className="mr-5">
+                    {data.courseName}
+                  </span>
+                );
+              })}
+              <br></br>
+              <div className="text-right">
+                {clickedStudentInfo.active ? (
+                  <Button onClick={() => updateStudentStatus(clickedStudentInfo.id,false)} className="m-1 bg-red-400">
+                    Mark as Inactive
+                  </Button>
+                ) : (
+                  <Button onClick={()=>updateStudentStatus(clickedStudentInfo.id,true)}className="m-1 bg-green-400">Mark as Active</Button>
+                )}
+                <Button className="m-1 bg-red-400">Delete Student</Button>
               </div>
-            )
-          }
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

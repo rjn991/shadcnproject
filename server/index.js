@@ -95,6 +95,26 @@ app.post('/api/addStudent', async (req, res) => {
   }
 });
 
+app.put('/api/updateStudentStatus/:id', async (req, res) => {
+  const { id } = req.params;  
+  const { active } = req.body; 
+
+  try {
+    const updatedStudent = await prisma.student.update({
+      where: {
+        id: parseInt(id),  
+      },
+      data: {
+        active: active,  
+      },
+    });
+
+    res.status(200).json(updatedStudent);  
+  } catch (error) {
+    console.error('Error updating student status:', error);
+    res.status(500).json({ error: 'An error occurred while updating the student status' });
+  }
+});
 
 
 
