@@ -1,9 +1,9 @@
 import express, { json } from "express";
 import { PrismaClient } from "@prisma/client";
-
+import cors from "cors"
 const app = express();
 const prisma = new PrismaClient();
-
+app.use(cors());
 app.use(json());
 
 app.get("/api/courses", async (req, res) => {
@@ -38,6 +38,33 @@ app.get("/api/courses/:className", async (req, res) => {
     res.status(500).json({ error: "An error occurred while fetching courses" });
   }
 });
+
+app.post('/api/addStudent', async (req, res) => {
+  const { studentName, annualYear, className, courseIds } = req.body;
+
+  try {
+    const newStudent = await prisma.student.create({
+      data: {
+        studentName,
+        annualYear,
+        class: className,
+        courses: {
+          connect: courseIds.map((id) => ({ id })),
+        },
+      },
+    });
+    res.status(201).json(newStudent);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while adding the student' });
+  }
+});
+
+
+
+
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

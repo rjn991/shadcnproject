@@ -38,6 +38,23 @@ const Main = () => {
   const [courses, setCourses] = useState([]);
   const [addCourses, addCoursesUpdate] = useState([]);
 
+  const handleSubmit = async (studentName, annualYear, className, courseIds) => {
+    const studentData = {
+      studentName,
+      annualYear,
+      className,
+      courseIds
+    };
+    try {
+      const response = await axios.post('http://localhost:3000/api/addStudent', studentData);
+      console.log('Student added:', response.data);
+    } catch (error) {
+      console.error('Error adding student:', error);
+    }
+    addCoursesUpdate([]);
+    setCourses([]);
+  };
+
   return (
     <div className="mt-3 mx-5 p-4 bg-white rounded-lg">
       <div className="flex place-content-between">
@@ -48,8 +65,8 @@ const Main = () => {
               <SelectValue placeholder="Select Year" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ay2324">AY 2023 24</SelectItem>
-              <SelectItem value="ay2425">AY 2024 25</SelectItem>
+              <SelectItem value="AY 2023 24">AY 2023 24</SelectItem>
+              <SelectItem value="AY 2024 25">AY 2024 25</SelectItem>
             </SelectContent>
           </Select>
           <Select>
@@ -57,8 +74,8 @@ const Main = () => {
               <SelectValue placeholder="Select Class" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ay2324">8 CBSE</SelectItem>
-              <SelectItem value="ay2425">9 CBSE</SelectItem>
+              <SelectItem value="8">8 CBSE</SelectItem>
+              <SelectItem value="9">9 CBSE</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -106,8 +123,8 @@ const Main = () => {
                       <SelectValue placeholder="Select Year" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="ay2324">AY 2023 24</SelectItem>
-                      <SelectItem value="ay2425">AY 2024 25</SelectItem>
+                      <SelectItem value="AY 2023 24">AY 2023 24</SelectItem>
+                      <SelectItem value="AY 2024 25">AY 2024 25</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -144,15 +161,28 @@ const Main = () => {
                     <Label>Select Courses</Label>
                     {courses.map((data, id) => {
                       return (
-                        <div key={data.id} className="grid grid-cols-4 items-center gap-4">
-                          <label htmlFor="terms" className="text-right">{data.courseName}</label>
-                          <Checkbox value={data.id} name="courses" checked={addCourses.includes(data.id)} onCheckedChange={(checked)=>{
-                              addCoursesUpdate((prev) =>
-                                checked
-                                  ? [...prev, data.id] // Add the ID if checked
-                                  : prev.filter((id) => id !== data.id) // Remove the ID if unchecked
+                        <div
+                          key={data.id}
+                          className="grid grid-cols-4 items-center gap-4"
+                        >
+                          <label htmlFor="terms" className="text-right">
+                            {data.courseName}
+                          </label>
+                          <Checkbox
+                            value={data.id}
+                            name="courses"
+                            checked={addCourses.includes(data.id)}
+                            onCheckedChange={(checked) => {
+                              addCoursesUpdate(
+                                (prev) =>
+                                  checked
+                                    ? [...prev, data.id] // Add the ID if checked
+                                    : prev.filter((id) => id !== data.id) // Remove the ID if unchecked
                               );
-                          }}> </Checkbox>
+                            }}
+                          >
+                            {" "}
+                          </Checkbox>
                         </div>
                       );
                     })}
@@ -165,9 +195,18 @@ const Main = () => {
                   <Button
                     type="submit"
                     onClick={() => {
-                      console.log(addStudentName, addYear, addClass, addCourses);
-                      addCoursesUpdate([])
-                      setCourses([])
+                      console.log(
+                        addStudentName,
+                        addYear,
+                        addClass,
+                        addCourses
+                      );
+                      handleSubmit(
+                        addStudentName,
+                        addYear,
+                        addClass,
+                        addCourses
+                      );
                     }}
                   >
                     Save

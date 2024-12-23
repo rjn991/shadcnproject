@@ -17,11 +17,11 @@ datasource db {
 model Student {
   id          Int      @id @default(autoincrement())
   studentName String
-  annualYear  Int
+  annualYear  String
   class       String
   courses     Course[] @relation("StudentCourses") // Many-to-many relation: a student can have many courses
   dateJoined  DateTime @default(now())
-  lastLogin   DateTime
+  lastLogin   DateTime @default(now())
   active      Boolean  @default(true)
 }
 
