@@ -32,6 +32,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import axios from "axios";
 import greenCircle from "../../assets/icons/green.svg";
 import redCircle from "../../assets/icons/red.svg";
+import plus from "../../assets/icons/plus.svg"
 const Main = () => {
   const [addStudentName, addStudentNameUpdate] = useState();
   const [addYear, addYearUpdate] = useState();
@@ -179,7 +180,7 @@ const Main = () => {
               setGetYear(e);
             }}
           >
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-[150px] bg-slate-200 ring-0 focus:ring-0 font-bold text-slate-600">
               <SelectValue placeholder="Select Year" />
             </SelectTrigger>
             <SelectContent>
@@ -192,7 +193,7 @@ const Main = () => {
               setGetClass(e);
             }}
           >
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px]  bg-slate-200 ring-0 focus:ring-0 font-bold text-slate-600">
               <SelectValue placeholder="Select Class" />
             </SelectTrigger>
             <SelectContent>
@@ -206,7 +207,7 @@ const Main = () => {
         <div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button>+ Add new Student</Button>
+              <Button variant="secondary" className=" bg-slate-200 ring-0 focus:ring-0 font-bold text-slate-600"><img src={plus}></img>Add new Student</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
