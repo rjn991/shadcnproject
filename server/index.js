@@ -6,15 +6,6 @@ const prisma = new PrismaClient();
 app.use(cors());
 app.use(json());
 
-app.get("/api/courses", async (req, res) => {
-  try {
-    const courses = await prisma.course.findMany();
-    res.json(courses);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred while fetching courses" });
-  }
-});
 
 app.get("/api/courses/:className", async (req, res) => {
   const { className } = req.params;
@@ -36,6 +27,27 @@ app.get("/api/courses/:className", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred while fetching courses" });
+  }
+});
+
+app.get('/api/getStudents', async (req, res) => {
+  const { annualYear, className } = req.query;
+
+  try {
+    const students = await prisma.student.findMany({
+      where: {
+        annualYear: annualYear, 
+        class: className,       
+      },
+      include: {
+        courses: true,
+      },
+    });
+
+    res.status(200).json(students);
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    res.status(500).json({ error: 'An error occurred while fetching the students' });
   }
 });
 

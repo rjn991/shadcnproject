@@ -27,10 +27,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import axios from "axios";
-
+import greenCircle from "../../assets/icons/green.svg";
+import redCircle from "../../assets/icons/red.svg";
 const Main = () => {
   const [addStudentName, addStudentNameUpdate] = useState();
   const [addYear, addYearUpdate] = useState();
@@ -38,18 +39,79 @@ const Main = () => {
   const [courses, setCourses] = useState([]);
   const [addCourses, addCoursesUpdate] = useState([]);
 
-  const handleSubmit = async (studentName, annualYear, className, courseIds) => {
+  const [getYear, setGetYear] = useState(null);
+  const [getClass, setGetClass] = useState(null);
+  const [displayData, setDisplayData] = useState([]);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      if (getYear && getClass) {
+        try {
+          const response = await axios.get(
+            "http://localhost:3000/api/getStudents",
+            {
+              params: {
+                annualYear: getYear,
+                className: getClass,
+              },
+            }
+          );
+
+          console.log("Students:", response.data);
+          setDisplayData(response.data);
+        } catch (error) {
+          console.error("Error fetching students:", error);
+        }
+      }
+    };
+
+    fetchStudents();
+  }, [getYear, getClass]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = new Intl.DateTimeFormat("en-US", { month: "short" }).format(
+      date
+    );
+    const year = date.getFullYear();
+    return `${day}. ${month}. ${year}`;
+  };
+
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = new Intl.DateTimeFormat("en-US", { month: "short" }).format(
+      date
+    );
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const amPm = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 || 12;
+    return `${day}. ${month}. ${year} ${formattedHours}:${minutes} ${amPm}`;
+  };
+
+  const handleSubmit = async (
+    studentName,
+    annualYear,
+    className,
+    courseIds
+  ) => {
     const studentData = {
       studentName,
       annualYear,
       className,
-      courseIds
+      courseIds,
     };
     try {
-      const response = await axios.post('http://localhost:3000/api/addStudent', studentData);
-      console.log('Student added:', response.data);
+      const response = await axios.post(
+        "http://localhost:3000/api/addStudent",
+        studentData
+      );
+      console.log("Student added:", response.data);
     } catch (error) {
-      console.error('Error adding student:', error);
+      console.error("Error adding student:", error);
     }
     addCoursesUpdate([]);
     setCourses([]);
@@ -60,7 +122,11 @@ const Main = () => {
       <div className="flex place-content-between">
         <div className="flex gap-4">
           {/* Left 2 Select items */}
-          <Select>
+          <Select
+            onValueChange={(e) => {
+              setGetYear(e);
+            }}
+          >
             <SelectTrigger className="w-[150px]">
               <SelectValue placeholder="Select Year" />
             </SelectTrigger>
@@ -69,13 +135,17 @@ const Main = () => {
               <SelectItem value="AY 2024 25">AY 2024 25</SelectItem>
             </SelectContent>
           </Select>
-          <Select>
+          <Select
+            onValueChange={(e) => {
+              setGetClass(e);
+            }}
+          >
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Select Class" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="8">8 CBSE</SelectItem>
-              <SelectItem value="9">9 CBSE</SelectItem>
+              <SelectItem value="8">CBSE 8</SelectItem>
+              <SelectItem value="9">CBSE 9</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -151,8 +221,8 @@ const Main = () => {
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="8">8 CBSE</SelectItem>
-                      <SelectItem value="9">9 CBSE</SelectItem>
+                      <SelectItem value="8">CBSE 8</SelectItem>
+                      <SelectItem value="9">CBSE 9</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -222,131 +292,54 @@ const Main = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Invoice</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Method</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
+            <TableHead className="text-black  font-bold">
+              Student Name
+            </TableHead>
+            <TableHead className="text-black  font-bold">Cohort</TableHead>
+            <TableHead className="w-[400px] text-black  font-bold">
+              Courses
+            </TableHead>
+            <TableHead className="text-black  font-bold">Date joined</TableHead>
+            <TableHead className="text-black  font-bold">Last login</TableHead>
+            <TableHead className="text-black  font-bold text-center">
+              Status
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">INV001</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Credit Card</TableCell>
-            <TableCell className="text-right">$250.00</TableCell>
-          </TableRow>
+          {displayData.length > 0 &&
+            displayData.map((data, id) => {
+              return (
+                <TableRow key={data.id}>
+                  <TableCell>{data.studentName}</TableCell>
+                  <TableCell>{data.annualYear}</TableCell>
+                  <TableCell>
+                    <div className="flex ">
+                      {data.courses.map((courses, id) => {
+                        return (
+                          <div key={courses.id} className="flex items-center p-1 pr-5 rounded-md bg-slate-100 mr-2">
+                            <img 
+                              className="w-6 h-6 object-cover rounded-md mr-1"
+                              src={courses.imageUrl}
+                            ></img>
+                            <p>{courses.courseName}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </TableCell>
+                  <TableCell>{formatDate(data.dateJoined)}</TableCell>
+                  <TableCell>{formatDateTime(data.lastLogin)}</TableCell>
+                  <TableCell>
+                    {data.active ? (
+                      <img className="w-4 m-auto" src={greenCircle}></img>
+                    ) : (
+                      <img className="w-4 m-auto" src={redCircle}></img>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
         </TableBody>
       </Table>
     </div>

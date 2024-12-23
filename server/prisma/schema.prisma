@@ -15,19 +15,20 @@ datasource db {
 }
 
 model Student {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   studentName String
   annualYear  String
   class       String
-  courses     Course[] @relation("StudentCourses") // Many-to-many relation: a student can have many courses
-  dateJoined  DateTime @default(now())
-  lastLogin   DateTime @default(now())
-  active      Boolean  @default(true)
+  courses     Course[]  @relation("StudentCourses") // Many-to-many relation: a student can have many courses
+  dateJoined  DateTime  @default(now())
+  lastLogin   DateTime  @default(now())
+  active      Boolean   @default(true)
 }
 
 model Course {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   courseName  String
   class       String
+  imageUrl    String    @default("https://od.ranjan.tech/science.png")
   students    Student[] @relation("StudentCourses") // Many-to-many relation: a course can have many students
 }
