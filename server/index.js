@@ -116,7 +116,30 @@ app.put('/api/updateStudentStatus/:id', async (req, res) => {
   }
 });
 
+app.delete('/api/deleteStudent/:id', async (req, res) => {
+  const { id } = req.params; 
 
+  try {
+    const deletedStudent = await prisma.student.delete({
+      where: {
+        id: parseInt(id), 
+      },
+    });
+
+    res.status(200).json({
+      message: 'Student deleted successfully',
+      deletedStudent,
+    });
+  } catch (error) {
+    console.error('Error deleting student:', error);
+
+    if (error.code === 'P2025') {
+      res.status(404).json({ error: 'Student not found' });
+    } else {
+      res.status(500).json({ error: 'An error occurred while deleting the student' });
+    }
+  }
+});
 
 
 

@@ -145,13 +145,30 @@ const Main = () => {
         }
       );
       console.log("Updated student:", response.data);
-      setCounter((prev)=> prev+1)
-      setViewDialog(false)
+      setCounter((prev) => prev + 1);
+      setViewDialog(false);
     } catch (error) {
       console.error("Error updating student status:", error);
     }
   };
-  
+
+  const deleteStudent = async (id) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/deleteStudent/${id}`
+      );
+      console.log("Student deleted successfully:", response.data);
+      setCounter((prev) => prev + 1);
+      setViewDialog(false)
+
+    } catch (error) {
+      console.error(
+        "Error deleting student:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
   return (
     <div className="mt-3 mx-5 p-4 bg-white rounded-lg">
       <div className="flex place-content-between">
@@ -418,13 +435,25 @@ const Main = () => {
               <br></br>
               <div className="text-right">
                 {clickedStudentInfo.active ? (
-                  <Button onClick={() => updateStudentStatus(clickedStudentInfo.id,false)} className="m-1 bg-red-400">
+                  <Button
+                    onClick={() =>
+                      updateStudentStatus(clickedStudentInfo.id, false)
+                    }
+                    className="m-1 bg-red-400"
+                  >
                     Mark as Inactive
                   </Button>
                 ) : (
-                  <Button onClick={()=>updateStudentStatus(clickedStudentInfo.id,true)}className="m-1 bg-green-400">Mark as Active</Button>
+                  <Button
+                    onClick={() =>
+                      updateStudentStatus(clickedStudentInfo.id, true)
+                    }
+                    className="m-1 bg-green-400"
+                  >
+                    Mark as Active
+                  </Button>
                 )}
-                <Button className="m-1 bg-red-400">Delete Student</Button>
+                <Button onClick={()=>deleteStudent(clickedStudentInfo.id)}className="m-1 bg-red-400">Delete Student</Button>
               </div>
             </div>
           )}
