@@ -43,6 +43,11 @@ const Main = () => {
   const [getClass, setGetClass] = useState(null);
   const [displayData, setDisplayData] = useState([]);
 
+  const [viewDialog, setViewDialog] = useState(false);
+  const [clickedStudentId, setClickedStudentId] = useState()
+  const [clickedStudentInfo,setClickedStudentinfo] = useState()
+
+  const [counter,setCounter] = useState(0)
   useEffect(() => {
     const fetchStudents = async () => {
       if (getYear && getClass) {
@@ -66,7 +71,18 @@ const Main = () => {
     };
 
     fetchStudents();
-  }, [getYear, getClass]);
+  }, [getYear, getClass,counter]);
+
+  const handleTableClick = async (studentId)=> {
+    setClickedStudentId(studentId)
+    try {
+      const response = await axios.get(`http://localhost:3000/api/getStudent/${studentId}`);
+      setClickedStudentinfo(response.data)
+    } catch (error) {
+      console.error('Error fetching student:', error);
+    }
+    setViewDialog(true)
+  }
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -110,6 +126,7 @@ const Main = () => {
         studentData
       );
       console.log("Student added:", response.data);
+      setCounter((prev)=> prev+1)
     } catch (error) {
       console.error("Error adding student:", error);
     }
@@ -310,15 +327,18 @@ const Main = () => {
           {displayData.length > 0 &&
             displayData.map((data, id) => {
               return (
-                <TableRow key={data.id}>
+                <TableRow key={data.id} id={data.id} onClick={()=>handleTableClick(data.id)}>
                   <TableCell>{data.studentName}</TableCell>
                   <TableCell>{data.annualYear}</TableCell>
                   <TableCell>
                     <div className="flex ">
                       {data.courses.map((courses, id) => {
                         return (
-                          <div key={courses.id} className="flex items-center p-1 pr-5 rounded-md bg-slate-100 mr-2">
-                            <img 
+                          <div
+                            key={courses.id}
+                            className="flex items-center p-1 pr-5 rounded-md bg-slate-100 mr-2"
+                          >
+                            <img
                               className="w-6 h-6 object-cover rounded-md mr-1"
                               src={courses.imageUrl}
                             ></img>
@@ -342,6 +362,42 @@ const Main = () => {
             })}
         </TableBody>
       </Table>
+
+      <Dialog open={viewDialog} onOpenChange={() => setViewDialog(false)}>
+        <DialogContent>
+          <DialogTitle>Student Information</DialogTitle>
+          <DialogDescription>View and Update status here.</DialogDescription>
+          {
+            clickedStudentInfo && (             
+              <div>
+                <span className="text-xl font-bold ">{clickedStudentInfo.studentName}</span>
+                <br></br>
+                <span className="font-bold">Cohot : </span>
+                <span>{clickedStudentInfo.annualYear}</span>
+                <br></br>
+                <span className="font-bold">Date of Joining : </span>
+                <span>{formatDate(clickedStudentInfo.dateJoined)}</span>
+                <br></br>
+                <span className="font-bold">Last Login : </span>
+                <span>{formatDateTime(clickedStudentInfo.lastLogin)}</span>
+                <br></br>
+                <span className="font-bold">Status : </span>
+                <span>{clickedStudentInfo.active?"Active":"Inactive"}</span>
+                <br></br>
+                <span className="font-bold">Courses : </span>
+                {clickedStudentInfo.courses.map((data,id)=>{
+                  return<span key={data.id} className="mr-5">{data.courseName}</span>
+                })}
+                <br></br>
+                <div className="text-right">
+                  {clickedStudentInfo.active?<Button className="m-1 bg-red-400">Mark as Inactive</Button>:<Button className="m-1 bg-green-400">Mark as Active</Button>}
+                  <Button className="m-1 bg-red-400">Delete Student</Button>
+                </div>
+              </div>
+            )
+          }
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -51,6 +51,29 @@ app.get('/api/getStudents', async (req, res) => {
   }
 });
 
+app.get('/api/getStudent/:id', async (req, res) => {
+  const { id } = req.params; 
+  try {
+    const student = await prisma.student.findUnique({
+      where: {
+        id: parseInt(id), 
+      },
+      include: {
+        courses: true, 
+      },
+    });
+
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    res.status(200).json(student);  
+  } catch (error) {
+    console.error('Error fetching student:', error);
+    res.status(500).json({ error: 'An error occurred while fetching the student' });
+  }
+});
+
 app.post('/api/addStudent', async (req, res) => {
   const { studentName, annualYear, className, courseIds } = req.body;
 
