@@ -34,6 +34,8 @@ import greenCircle from "../../assets/icons/green.svg";
 import redCircle from "../../assets/icons/red.svg";
 import plus from "../../assets/icons/plus.svg"
 
+import { useSelector, useDispatch } from 'react-redux'
+import {setDisplayData} from "../../features/displayData/displayDataSlice"
 
 const Main = () => {
   const [addStudentName, addStudentNameUpdate] = useState();
@@ -44,7 +46,6 @@ const Main = () => {
 
   const [getYear, setGetYear] = useState(null);
   const [getClass, setGetClass] = useState(null);
-  const [displayData, setDisplayData] = useState([]);
 
   const [viewDialog, setViewDialog] = useState(false);
   const [clickedStudentId, setClickedStudentId] = useState();
@@ -52,7 +53,8 @@ const Main = () => {
 
   const [counter, setCounter] = useState(0);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
+  const displayData = useSelector((state)=> state.displayData.value)
+  const dispach = useDispatch()
   useEffect(() => {
     const fetchStudents = async () => {
       if (getYear && getClass) {
@@ -68,7 +70,8 @@ const Main = () => {
           );
 
           console.log("Students:", response.data);
-          setDisplayData(response.data);
+          dispach(setDisplayData(response.data));
+          console.log("Previous redux value :" ,displayData)
         } catch (error) {
           console.error("Error fetching students:", error);
         }
