@@ -33,6 +33,8 @@ import axios from "axios";
 import greenCircle from "../../assets/icons/green.svg";
 import redCircle from "../../assets/icons/red.svg";
 import plus from "../../assets/icons/plus.svg"
+
+
 const Main = () => {
   const [addStudentName, addStudentNameUpdate] = useState();
   const [addYear, addYearUpdate] = useState();
@@ -49,12 +51,14 @@ const Main = () => {
   const [clickedStudentInfo, setClickedStudentinfo] = useState();
 
   const [counter, setCounter] = useState(0);
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchStudents = async () => {
       if (getYear && getClass) {
         try {
           const response = await axios.get(
-            "http://localhost:3000/api/getStudents",
+            `${API_BASE_URL}/api/getStudents`,
             {
               params: {
                 annualYear: getYear,
@@ -78,7 +82,7 @@ const Main = () => {
     setClickedStudentId(studentId);
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/getStudent/${studentId}`
+        `${API_BASE_URL}/api/getStudent/${studentId}`
       );
       setClickedStudentinfo(response.data);
     } catch (error) {
@@ -125,7 +129,7 @@ const Main = () => {
     };
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/addStudent",
+        `${API_BASE_URL}/api/addStudent`,
         studentData
       );
       console.log("Student added:", response.data);
@@ -140,7 +144,7 @@ const Main = () => {
   const updateStudentStatus = async (id, activeStatus) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/updateStudentStatus/${id}`,
+        `${API_BASE_URL}/api/updateStudentStatus/${id}`,
         {
           active: activeStatus,
         }
@@ -156,7 +160,7 @@ const Main = () => {
   const deleteStudent = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/deleteStudent/${id}`
+        `${API_BASE_URL}/api/deleteStudent/${id}`
       );
       console.log("Student deleted successfully:", response.data);
       setCounter((prev) => prev + 1);
@@ -261,7 +265,7 @@ const Main = () => {
                       addClassUpdate(e);
                       try {
                         const response = await axios.get(
-                          `http://localhost:3000/api/courses/${e}`
+                          `${API_BASE_URL}/api/courses/${e}`
                         );
                         setCourses(response.data);
                       } catch (error) {
