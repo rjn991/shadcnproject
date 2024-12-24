@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 
-
 import dashboardIcon from "../../assets/icons/dashboard-icon.svg";
 import studentsIcon from "../../assets/icons/students-icon.svg";
 import chapterIcon from "../../assets/icons/chapter-icon.svg";
@@ -108,7 +107,49 @@ const Navbar = () => {
           <img className="h-12" src={logo} />
         </div>
         <div>
-          <img className="w-10 bg-orange-300 rounded-md" src={avatar}></img>
+          <Drawer>
+            <DrawerTrigger>
+              <img className="w-10 bg-orange-300 rounded-md" src={avatar}></img>
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>
+                  <p className="font-bold text-slate-900">Adeline H. Dancy</p>
+                </DrawerTitle>
+                <DrawerDescription></DrawerDescription>
+                <div className="font-bold">
+                  <div className="flex bg-slate-200 items-center rounded-lg flex-1">
+                    <div>
+                      <img className="p-3" src={searchIcon}></img>
+                    </div>
+                    <div>
+                      <input
+                        className="outline-none bg-slate-200"
+                        type="text"
+                        placeholder="Search your course"
+                      ></input>
+                    </div>
+                  </div>
+                  <div className="flex mx-3 my-2 px-2 py-3 rounded-md cursor-default hover:bg-zinc-100">
+                    <img src={helpIcon} alt="sidebar-icon"></img>
+                    <p className="ml-2">Help</p>
+                  </div>
+                  <div className="flex mx-3 my-2 px-2 py-3 rounded-md cursor-default hover:bg-zinc-100">
+                    <img src={messageIcon} alt="sidebar-icon"></img>
+                    <p className="ml-2">Messages</p>
+                  </div>
+                  <div className="flex mx-3 my-2 px-2 py-3 rounded-md cursor-default hover:bg-zinc-100">
+                    <img src={altSettingsIcon} alt="sidebar-icon"></img>
+                    <p className="ml-2">Settings</p>
+                  </div>
+                  <div className="flex mx-3 my-2 px-2 py-3 rounded-md cursor-default hover:bg-zinc-100">
+                    <img src={notificationIcon} alt="sidebar-icon"></img>
+                    <p className="ml-2">Notifications</p>
+                  </div>
+                </div>
+              </DrawerHeader>
+            </DrawerContent>
+          </Drawer>
         </div>
       </div>
     </>
